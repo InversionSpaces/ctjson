@@ -28,48 +28,49 @@ namespace ctjson {
  * @endcode
  */
 class SerializationHelper {
+public:
+  /**
+   * @brief Class representing class field
+   *
+   * @tparam T type of field
+   */
+  template <typename T>
+  class Field : public detail::FieldBase<const T> {
+    using Base = detail::FieldBase<const T>;
+
   public:
     /**
-     * @brief Class representing class field
-     *
-     * @tparam T type of field
+     * @param name name of filed - key in json
+     * @param ref reference to value to dump
      */
-    template <typename T> class Field : public detail::FieldBase<const T> {
-        using Base = detail::FieldBase<const T>;
-
-      public:
-        /**
-         * @param name name of filed - key in json
-         * @param ref reference to value to dump
-         */
-        Field(std::string name, const T &ref) : Base(std::move(name), ref) {}
-
-        /**
-         * @return reference to value
-         */
-        const T &ref() const { return Base::m_ref; }
-    };
+    Field(std::string name, const T &ref) : Base(std::move(name), ref) {}
 
     /**
-     * @brief Dump class with given @param fields
-     *
-     * @tparam Writer type of writer
-     * @tparam Args types of fields
-     * @param writer writer
-     * @param fields references to fields
+     * @return reference to value
      */
-    template <typename Writer, typename... Args>
-    static void dump(Writer &writer, Field<Args> &...fields) {
-        writer.start_object();
+    const T &ref() const { return Base::m_ref; }
+  };
 
-        (
-            [&]() {
-                writer.key(fields.name);
-                Serializer::dump<Args>(fields.ref(), writer);
-            }(),
-            ...);
+  /**
+   * @brief Dump class with given @param fields
+   *
+   * @tparam Writer type of writer
+   * @tparam Args types of fields
+   * @param writer writer
+   * @param fields references to fields
+   */
+  template <typename Writer, typename... Args>
+  static void dump(Writer &writer, Field<Args> &...fields) {
+    writer.start_object();
 
-        writer.end_object();
-    }
+    (
+        [&]() {
+          writer.key(fields.name);
+          Serializer::dump<Args>(fields.ref(), writer);
+        }(),
+        ...);
+
+    writer.end_object();
+  }
 };
 } // namespace ctjson

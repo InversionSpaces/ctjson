@@ -15,11 +15,12 @@ namespace ctjson {
  * @param json json string
  * @return parse result
  */
-template <typename T> inline ParseResult<T> parse(const std::string &json) {
-    rapidjson::StringStream ss(json.c_str());
-    ContextTokenStream<rapidjson::StringStream> tokens(std::move(ss));
+template <typename T>
+inline ParseResult<T> parse(const std::string &json) {
+  rapidjson::StringStream ss(json.c_str());
+  ContextTokenStream<rapidjson::StringStream> tokens(std::move(ss));
 
-    return Deserializer::parse<T>(tokens);
+  return Deserializer::parse<T>(tokens);
 }
 
 /**
@@ -28,12 +29,13 @@ template <typename T> inline ParseResult<T> parse(const std::string &json) {
  * @param value value to dump
  * @return json string
  */
-template <typename T> inline std::string dump(const T &value) {
-    rapidjson::StringBuffer sb;
-    SimpleWriter<rapidjson::StringBuffer> writer(sb);
+template <typename T>
+inline std::string dump(const T &value) {
+  rapidjson::StringBuffer sb;
+  SimpleWriter<rapidjson::StringBuffer> writer(sb);
 
-    Serializer::dump(value, writer);
+  Serializer::dump(value, writer);
 
-    return sb.GetString();
+  return sb.GetString();
 }
 } // namespace ctjson
